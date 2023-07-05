@@ -1,0 +1,14 @@
+env.py
+env.py
+env.py
+env.py
+
+titanic.csv
+titanic.csv
+titanic.csv
+
+env.py
+.DS_Store
+.ipynb_checkpoints/
+__pycache__
+*.csv
