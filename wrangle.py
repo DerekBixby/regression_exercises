@@ -54,7 +54,7 @@ def split_data(df, test_size=.2, validate_size=.25, col_to_stratify=None, random
     '''
     This splits data into test,train and validate data
     '''
-    # This takes in a default variable or a default variable to determine target variable for stratification
+    # This takes in a default variable or a variable to determine target variable for stratification
     if col_to_stratify == None:
     # this splits the data
         train_validate, test = train_test_split(df, test_size=test_size, random_state=random_state)
@@ -104,3 +104,14 @@ def wrangle_zillow():
     df = df.dropna()
 
     return df
+
+def minmax_scale(train, validate, test)
+    scaler_minmax = sklearn.preprocessing.MinMaxScaler()
+
+    scaler_minmax.fit(x_train)
+
+    x_train_scaled_minmax = scaler_minmax.transform(x_train)
+    x_validate_scaled_minmax = scaler_minmax.transform(x_validate)
+    x_test_scaled_minmax = scaler_minmax.transform(x_test)
+    
+    return x_train_scaled_minmax, x_validate_scaled_minmax, x_test_scaled_minmax
