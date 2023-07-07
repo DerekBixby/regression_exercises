@@ -1,0 +1,26 @@
+def plot_categorical_and_continuous_vars(train):
+        sns.stripplot(x='bedroomcnt', y='yearbuilt', data=train)
+        plt.show()
+        sns.stripplot(x='bedroomcnt', y='bathroomcnt', data=train)
+        plt.show()
+        sns.stripplot(x='bedroomcnt', y='calculatedfinishedsquarefeet', data=train)
+        plt.show()
+        sns.stripplot(x='bedroomcnt', y='taxamount', data=train)
+        plt.show()
+        sns.stripplot(x='bedroomcnt', y='taxvaluedollarcnt', data=train)
+        plt.show()
+        sns.stripplot(x='fips', y='yearbuilt', data=train)
+        plt.show()
+        sns.stripplot(x='fips', y='bathroomcnt', data=train)
+        plt.show()
+        sns.stripplot(x='fips', y='calculatedfinishedsquarefeet', data=train)
+        plt.show()
+        sns.stripplot(x='fips', y='taxamount', data=train)
+        plt.show()
+        sns.stripplot(x='fips', y='taxvaluedollarcnt', data=train)
+        plt.show()
+        
+def plot_variable_pairs(train): 
+    sns.pairplot(data = train, corner=True)
+    plt.show()
+
