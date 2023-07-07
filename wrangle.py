@@ -115,3 +115,54 @@ def minmax_scale(train, validate, test)
     x_test_scaled_minmax = scaler_minmax.transform(x_test)
     
     return x_train_scaled_minmax, x_validate_scaled_minmax, x_test_scaled_minmax
+
+def visualize_scaler(scaler, df, columns_to_scale, bins=10):
+    #create subplot structure
+    fig, axs = plt.subplots(len(columns_to_scale), 2, figsize=(12,12))
+
+    #copy the df for scaling
+    df_scaled = df.copy()
+    
+    #fit and transform the df
+    df_scaled[columns_to_scale] = scaler.fit_transform(df[columns_to_scale])
+
+    #plot the pre-scaled data next to the post-scaled data in one row of a subplot
+    for (ax1, ax2), col in zip(axs, columns_to_scale):
+        ax1.hist(df[col], bins=bins)
+        ax1.set(title=f'{col} before scaling', xlabel=col, ylabel='count')
+        ax2.hist(df_scaled[col], bins=bins)
+        ax2.set(title=f'{col} after scaling with {scaler.__class__.__name__}', xlabel=col, ylabel='count')
+    plt.tight_layout()
+
+
+
+    # call function with minmax
+    visualize_scaler(scaler=MinMaxScaler(), 
+                 df=train, 
+                 columns_to_scale=to_scale, 
+                 bins=50)
+
+# min_max scale function provided 
+
+def scale_data(train, 
+               validate, 
+               test, 
+               to_scale):
+    #make copies for scaling
+    train_scaled = train.copy()
+    validate_scaled = test.copy()
+    test_scaled = test.copy()
+
+    #scale them!
+    #make the thing
+    scaler = MinMaxScaler()
+
+    #fit the thing
+    scaler.fit(train[to_scale])
+
+    #use the thing
+    train_scaled[to_scale] = scaler.transform(train[to_scale])
+    validate_scaled[to_scale] = scaler.transform(validate[to_scale])
+    test_scaled[to_scale] = scaler.transform(test[to_scale])
+    
+    return train_scaled, validate_scaled, test_scaled
