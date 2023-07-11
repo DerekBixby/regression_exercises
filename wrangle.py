@@ -37,17 +37,6 @@ def get_zillow_data():
         
     return df
 
-def clean_zillow(df):
-    '''
-    This gets rid of columns not used in the project and creates dummy variables for use in the model
-    '''
-    # this drops unnecessary columns
-    df = df.drop(columns =['payment_type_id','internet_service_type_id','contract_type_id', 'customer_id', 'gender', 'senior_citizen', 'partner', 'tenure', 'phone_service', 'multiple_lines', 'online_security', 'online_backup', 'device_protection', 'tech_support', 'streaming_tv', 'streaming_movies', 'paperless_billing', 'total_charges', 'internet_service_type', 'payment_type'])
-
-    # this creates dummy variables
-    dummy_df = pd.get_dummies(df[['dependents', 'contract_type', 'billing_type', 'churn']], drop_first=True)
-    df = pd.concat([df, dummy_df], axis=1)
-    return df
 
 
 def split_data(df, test_size=.2, validate_size=.25, col_to_stratify=None, random_state=None):
@@ -105,7 +94,7 @@ def wrangle_zillow():
 
     return df
 
-def minmax_scale(train, validate, test)
+def minmax_scale(train, validate, test):
     scaler_minmax = sklearn.preprocessing.MinMaxScaler()
 
     scaler_minmax.fit(x_train)
@@ -166,3 +155,28 @@ def scale_data(train,
     test_scaled[to_scale] = scaler.transform(test[to_scale])
     
     return train_scaled, validate_scaled, test_scaled
+
+def X_y_split(df, target):
+    '''
+    This function takes in a dataframe and a target variable
+    Then it returns the X_train, y_train, X_validate, y_validate, X_test, y_test
+    and a print statement with the shape of the new dataframes
+    '''  
+    train, validate, test = split_data(df)
+
+    X_train = train.drop(columns= target)
+    y_train = train[target]
+
+    X_validate = validate.drop(columns= target)
+    y_validate = validate[target]
+
+    X_test = test.drop(columns= target)
+    y_test = test[target]
+        
+    # Have function print datasets shape
+    print(f'''
+    X_train -> {X_train.shape}
+    X_validate -> {X_validate.shape}
+    X_test -> {X_test.shape}''') 
+    
+    return X_train, y_train, X_validate, y_validate, X_test, y_test
