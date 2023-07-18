@@ -37,6 +37,57 @@ def get_zillow_data():
         
     return df
 
+def handle_missing_values(df, prop_required_column = .5, prop_required_row = .70):
+    threshold = int(round(prop_required_column*len(df.index),0))
+    df.dropna(axis=1, thresh=threshold, inplace=True)
+    threshold = int(round(prop_required_row*len(df.columns),0))
+    df.dropna(axis=0, thresh=threshold, inplace=True)
+    return df
+
+def wrangle_zillow():
+    df = pd.read_csv('zillow.csv')
+    
+    # Restrict df to only properties that meet single unit use criteria
+    single_use = [261, 262, 263, 264, 266, 268, 273, 276, 279]
+    df = df[df.propertylandusetypeid.isin(single_use)]
+    
+    # Restrict df to only those properties with at least 1 bath & bed and 350 sqft area
+    df = df[(df.bedroomcnt > 0) & (df.bathroomcnt > 0) & ((df.unitcnt<=1)|df.unitcnt.isnull())\
+            & (df.calculatedfinishedsquarefeet>350)]
+
+    # Handle missing values i.e. drop columns and rows based on a threshold
+    df = handle_missing_values(df)
+    
+    # Add column for counties
+    df['county'] = np.where(df.fips == 6037, 'Los_Angeles',
+                           np.where(df.fips == 6059, 'Orange', 
+                                   'Ventura'))    
+    # drop columns not needed
+    df = remove_columns(df, ['id',
+       'calculatedbathnbr', 'finishedsquarefeet12', 'fullbathcnt', 'heatingorsystemtypeid'
+       ,'propertycountylandusecode', 'propertylandusetypeid','propertyzoningdesc', 
+        'censustractandblock', 'propertylandusedesc','heatingorsystemdesc','unitcnt'
+                            ,'buildingqualitytypeid'])
+
+
+    # replace nulls in unitcnt with 1
+#     df.unitcnt.fillna(1, inplace = True)
+    
+    # assume that since this is Southern CA, null means 'None' for heating system
+#     df.heatingorsystemdesc.fillna('None', inplace = True)
+    
+    # replace nulls with median values for select columns
+    df.lotsizesquarefeet.fillna(7313, inplace = True)
+#     df.buildingqualitytypeid.fillna(6.0, inplace = True)
+
+    # Columns to look for outliers
+    df = df[df.taxvaluedollarcnt < 5_000_000]
+    df[df.calculatedfinishedsquarefeet < 8000]
+    
+    # Just to be sure we caught all nulls, drop them here
+    df = df.dropna()
+    
+    return df
 
 
 def split_data(df, test_size=.2, validate_size=.25, col_to_stratify=None, random_state=None):
